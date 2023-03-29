@@ -25,34 +25,23 @@ async function validateUserId(req, res, next) {
     });
   }
 }
-
-async function validateUser(req, res, next) {
-  // DO YOUR
-  try {
-    const { name } = req.body;
-    if (!name) {
-      res.status(400).json({ message: "missing required name field" });
-    } else {
-      //later
-      req.body = name;
-      next();
-    }
-  } catch (err) {
-    //later
-    res.status(500).json({ message: "problem finding user" });
+function validateUser(req, res, next) {
+  const { name } = req.body;
+  if (!name || !name.trim()) {
+    res.status(400).json({ message: "missing required name field" });
+  } else {
+    req.name = name.trim();
+    next();
   }
 }
 
-async function validatePost(req, res, next) {
-  try {
-    const { text } = req.body;
-    if (!text) {
-      res.status(400).json({ message: "missing required text field" });
-    } else {
-      next();
-    }
-  } catch (error) {
-    console.log(error.message);
+function validatePost(req, res, next) {
+  const { text } = req.body;
+  if (!text || !text.trim()) {
+    res.status(400).json({ message: "missing required text field" });
+  } else {
+    req.text = text.trim();
+    next();
   }
 }
 
