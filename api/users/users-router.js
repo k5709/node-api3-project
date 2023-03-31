@@ -10,7 +10,7 @@ const Post = require("../posts/posts-model");
 
 const router = express.Router();
 
-router.get("/", validateUser, (req, res, next) => {
+router.get("/", (req, res, next) => {
   // RETURN AN ARRAY WITH ALL THE USERS
   User.get()
     .then((users) => {
@@ -26,11 +26,14 @@ router.get("/:id", validateUserId, (req, res) => {
   return res.json(req.user);
 });
 
-router.post("/", validateUser, validatePost, (req, res) => {
+router.post("/", validateUser, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER OBJECT
   // this needs a middleware to check that the request body is valid
-  console.log(req.user);
-  console.log(req.name);
+  User.insert({ name: req.name })
+    .then((newUser) => {
+      return res.status(201).json(newUser);
+    })
+    .catch(next);
 });
 
 router.put("/:id", validateUserId, validateUser, (req, res) => {
@@ -51,14 +54,20 @@ router.get("/:id/posts", validateUserId, (req, res) => {
   // RETURN THE ARRAY OF USER POSTS
   // this needs a middleware to verify user id
   console.log(req.user);
+  res.json(req.user);
 });
 
-router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+router.post("/:id/posts", validateUserId, validatePost, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER POST
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
-  console.log(req.user);
-  console.log(req.text);
+
+  User.insert({ name: req.name })
+    .then((newUser) => {
+      throw new Error("ouch!");
+      res.status(201).json(newUser);
+    })
+    .catch(next);
 });
 
 router.use((err, req, res, next) => {
